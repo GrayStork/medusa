@@ -1,0 +1,132 @@
+/* Game layout. Tokens only: no raw colors or font names here (see CLAUDE.md). Room-specific CSS lives in each room file. */
+html, body { height: 100%; }
+body { padding: 0; min-height: 100vh; overflow-x: hidden; }
+[hidden] { display: none !important; }
+
+.gold { color: var(--gold-500); }
+.muted { color: var(--text-muted); }
+h1, h2, h3, p, blockquote, figure { margin: 0; }
+
+/* Scene background: image when present, otherwise stone + glow (DS fallback) */
+.scene { position: fixed; inset: 0; z-index: 0; background-color: var(--stone-800);
+  background-image: radial-gradient(ellipse at 50% 40%, var(--stone-600) 0%, var(--stone-800) 65%, var(--stone-900) 100%);
+  background-size: cover; background-position: center; }
+.scene::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 30%, var(--scrim) 100%); }
+.scene--img::after { background: linear-gradient(to bottom, var(--scrim), transparent 20%, transparent 80%, var(--scrim)); }
+
+#app { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-3); }
+#topbar { flex: none; }
+#main { flex: 1; display: flex; gap: var(--space-4); align-items: flex-start; }
+#stage { flex: 1; min-width: 0; outline: none; }
+#bag { position: sticky; top: var(--space-3); flex: none; }
+
+/* Screens */
+.screen { max-width: 1100px; margin: 0 auto; }
+.screen--title { min-height: calc(100vh - 2 * var(--space-3)); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-4); text-align: center; }
+.screen--title .g-meander { width: min(480px, 80vw); }
+.screen--title .title { font-size: 72px; line-height: 80px; text-shadow: var(--shadow-panel); }
+.screen--title .subtitle { color: var(--text); text-shadow: var(--shadow-panel); }
+.title-actions { align-items: center; margin-top: var(--space-6); }
+/* Title art keeps open sky on the left: park the title block there, over a soft scrim, on wide screens */
+@media (min-width: 901px) {
+  body[data-screen="title"] .screen--title { max-width: none; align-items: flex-end; padding-left: 4vw; }
+  body[data-screen="title"] .screen--title > * { width: 460px; }
+  body[data-screen="title"] .screen--title::before { content: ""; position: fixed; inset: 0 auto 0 0; width: 52vw; z-index: -1;
+    background: linear-gradient(to right, var(--scrim) 0%, var(--scrim) 55%, transparent 100%); }
+  body[data-screen="title"] .title-actions > * { width: 100%; justify-content: center; }
+}
+.howto { margin: 0; padding-inline-start: var(--space-6); }
+
+.intro-grid { display: grid; grid-template-columns: minmax(200px, 300px) 1fr; gap: var(--space-8); align-items: center; padding-top: var(--space-6); }
+.mission { display: flex; flex-direction: column; gap: var(--space-2); }
+
+/* Framed art (portraits, endings) with icon fallback */
+.art { border: 2px solid var(--gold-500); border-radius: var(--radius-lg); box-shadow: var(--shadow-panel); overflow: hidden;
+  background: radial-gradient(circle, var(--stone-600), var(--stone-800)); display: grid; place-items: center; }
+.art img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.art--portrait { aspect-ratio: 2 / 3; width: 100%; }
+.art--wide { aspect-ratio: 16 / 9; width: 100%; max-width: 760px; margin: 0 auto; }
+.art--wide:not(.art--img) { aspect-ratio: auto; padding: var(--space-4); }
+/* Ending stand-in: Medusa's portrait, toned per ending, until ending art exists */
+.art--wide.art--standin { aspect-ratio: 2 / 3; width: 220px; }
+.ending-tone-1 img { filter: grayscale(.9) brightness(.8); }          /* force: turned to stone, the truth lost */
+.ending-tone-2 img { filter: sepia(.35) saturate(1.2) brightness(1.08); } /* freedom: warm sunrise */
+.ending-tone-3 { box-shadow: var(--glow-teal); }                       /* third way: guardian glow */
+.art-fallback { width: 120px; height: 120px; }
+.art-fallback img { width: 72px; height: 72px; }
+
+/* Room frame */
+.room { display: flex; flex-direction: column; gap: var(--space-4); }
+.room-head { display: flex; flex-direction: column; gap: var(--space-3); }
+.room-head h1 { text-shadow: var(--shadow-panel); }
+.room-intro { padding: var(--space-3) var(--space-4); font-size: 18px; line-height: 28px; }
+.room-body { min-height: 300px; }
+.room-say { min-height: 28px; padding: var(--space-2) var(--space-4); background: var(--stone-700); border-radius: var(--radius-md); }
+.room-say:empty { visibility: hidden; }
+
+/* Symbol earned */
+.screen--earned { align-items: center; text-align: center; margin-top: var(--space-6); gap: var(--space-4); max-width: 760px;
+  background: var(--stone-700); border: 2px solid var(--gold-500); border-radius: var(--radius-lg); box-shadow: var(--shadow-panel); padding: var(--space-6) var(--space-8); }
+.big-symbol { width: 220px; }
+.big-symbol .g-medal { width: 120px; height: 120px; }
+.big-symbol .g-medal img { width: 72px; height: 72px; }
+.earned-msg { max-width: 640px; }
+.symbols-row { justify-content: center; }
+
+/* Ending, bonus, results */
+.screen--ending, .screen--results, .screen--bonus { max-width: 820px; gap: var(--space-4); padding-top: var(--space-6); }
+.screen--ending .g-meander, .screen--results .g-meander { width: 100%; }
+.moral { color: var(--gold-300); text-align: center; background: var(--stone-700); border-radius: var(--radius-md); padding: var(--space-2) var(--space-4); align-self: center; }
+.results-card { gap: var(--space-4); }
+.g-stat-value.big { font-size: 48px; line-height: 56px; }
+.myth-text { white-space: pre-wrap; }
+
+/* M2: team setup */
+.screen--team { max-width: 520px; margin: var(--space-12) auto 0; padding: var(--space-6) var(--space-8); gap: var(--space-3); }
+.team-input { font-family: var(--font-body); font-size: 20px; line-height: 28px; min-height: var(--touch-min); padding: var(--space-2) var(--space-4);
+  color: var(--ink); background: var(--parchment-100); border: 2px solid var(--gold-700); border-radius: var(--radius-md); }
+.team-input:focus-visible { outline: var(--focus-width) solid var(--gold-300); outline-offset: 3px; }
+.players .players-btn { width: auto; padding: var(--space-2) var(--space-3); }
+.tb-team { color: var(--gold-300); }
+
+/* M2: temple map on the "symbol earned" screen */
+.map-slot { width: 100%; display: flex; justify-content: center; }
+.temple-map { width: 100%; max-width: 640px; }
+.temple-map .g-map-node { width: 104px; }
+
+/* M2: achievements on results */
+.ach-list { list-style: none; margin: var(--space-2) 0 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-1); }
+.ach { color: var(--text-muted); display: flex; gap: var(--space-2); align-items: baseline; }
+.ach--got { color: var(--text); }
+.ach-mark { color: var(--stone-400); font-size: 20px; }
+.ach--got .ach-mark { color: var(--gold-500); }
+.ach-desc { font-size: 16px; }
+.results-team { color: var(--text); }
+
+/* Dialog */
+.dlg { padding: 0; border: none; background: transparent; max-width: min(600px, 92vw); color: var(--text); }
+.dlg::backdrop { background: var(--scrim); }
+.dlg-body { display: flex; flex-direction: column; gap: var(--space-2); }
+.dlg-actions { margin-top: var(--space-4); justify-content: flex-start; }
+
+/* Toasts */
+#toasts { position: fixed; z-index: 20; top: calc(var(--topbar) + var(--space-6)); left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: var(--space-2); align-items: center; pointer-events: none; }
+#toasts .g-toast { animation: toast-in .3s ease-out; }
+.toast-out { opacity: 0; transition: opacity .5s; }
+@keyframes toast-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+/* Dev panel */
+#dev { position: fixed; z-index: 30; bottom: var(--space-2); right: var(--space-2); max-width: 420px; }
+#dev summary { cursor: pointer; color: var(--gold-500); }
+#dev .g-btn { min-height: 32px; padding: var(--space-1) var(--space-2); font-size: 16px; }
+.dev-img { margin: 0; padding-inline-start: var(--space-4); }
+.dev-ok { color: var(--success); } .dev-warn { color: var(--gold-300); } .dev-miss { color: var(--text-muted); }
+.dev-ans { color: var(--teal-200); }
+
+@media (max-width: 900px) {
+  .intro-grid { grid-template-columns: 1fr; }
+  .intro-art { max-width: 220px; margin: 0 auto; }
+  #main { flex-direction: column-reverse; }
+  #bag { position: static; width: auto; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+}
+@media (prefers-reduced-motion: reduce) { #toasts .g-toast { animation: none; } }
