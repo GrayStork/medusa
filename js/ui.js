@@ -147,8 +147,11 @@ G.dev = /[?&]dev=1\b/.test(location.search);
         '<div class="g-hourglass" aria-hidden="true"><span></span></div><span class="g-stat-value" id="tb-clock"></span></div>' +
         '<div class="g-stat"><span class="g-stat-label">' + C.ui.score + '</span><span class="g-stat-value" id="tb-score"></span></div>' +
         '<span class="g-stat-label" id="tb-room"></span><span class="g-stat-label tb-team" id="tb-team"></span><span class="g-spacer"></span>' +
-        '<button class="g-btn g-btn--secondary" id="tb-hint"><img src="' + ICON + 'ui-hint-lamp.svg" alt="">' + C.ui.hint + ' <span id="tb-hint-n" class="g-ltr"></span></button>';
+        '<span class="g-stat-label tb-saved" id="tb-saved" aria-live="polite"></span>' +
+        '<button class="g-btn g-btn--secondary" id="tb-hint"><img src="' + ICON + 'ui-hint-lamp.svg" alt="">' + C.ui.hint + ' <span id="tb-hint-n" class="g-ltr"></span></button>' +
+        '<button class="g-btn g-btn--quiet" id="tb-menu">☰ ' + C.ui.menu + '</button>';
       $("tb-hint").onclick = showHints;
+      $("tb-menu").onclick = function () { E().toTitle(); };
     }
     $("tb-clock").textContent = fmt(left);
     $("tb-time").classList.toggle("g-stat--late", left <= 0);
@@ -238,6 +241,9 @@ G.dev = /[?&]dev=1\b/.test(location.search);
       var s = h('<button class="g-btn g-btn--primary">' + C.ui.start + '</button>'); s.onclick = E().newGame; a.appendChild(s);
     }
     var ht = h('<button class="g-btn g-btn--quiet">' + C.ui.howTo + '</button>'); ht.onclick = showHowTo; a.appendChild(ht);
+    var note = h('<p class="caption save-note"></p>');
+    note.textContent = C.ui.autoSave + (hasSave ? " " + C.ui.newGameHint : "");
+    a.appendChild(note);
     st.appendChild(el);
   };
 
@@ -433,5 +439,15 @@ G.dev = /[?&]dev=1\b/.test(location.search);
     renderDev();
   }
 
-  G.ui = { render: render, renderTopbar: renderTopbar, renderBag: renderBag, toast: toast, dialog: dialog, art: art, findImage: findImage, setScene: setScene, esc: esc, h: h };
+  /* Small "נשמר ✓" flash in the top bar after each save, so players see their progress is kept. */
+  var savedTimer = null;
+  function flashSaved() {
+    var el = $("tb-saved"); if (!el) return;
+    el.textContent = "✓ " + C.ui.savedAt;
+    el.classList.add("tb-saved--on");
+    clearTimeout(savedTimer);
+    savedTimer = setTimeout(function () { el.classList.remove("tb-saved--on"); }, 1500);
+  }
+
+  G.ui = { flashSaved: flashSaved, render: render, renderTopbar: renderTopbar, renderBag: renderBag, toast: toast, dialog: dialog, art: art, findImage: findImage, setScene: setScene, esc: esc, h: h };
 })();

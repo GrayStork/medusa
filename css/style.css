@@ -88,6 +88,10 @@ h1, h2, h3, p, blockquote, figure { margin: 0; }
 .team-input:focus-visible { outline: var(--focus-width) solid var(--gold-300); outline-offset: 3px; }
 .players .players-btn { width: auto; padding: var(--space-2) var(--space-3); }
 .tb-team { color: var(--gold-300); }
+.tb-saved { color: var(--teal-400); opacity: 0; transition: opacity .4s; }
+.tb-saved--on { opacity: 1; }
+.save-note { color: var(--text-muted); max-width: 420px; text-shadow: var(--shadow-panel); }
+@media (prefers-reduced-motion: reduce) { .tb-saved { transition: none; } }
 
 /* M2: temple map on the "symbol earned" screen */
 .map-slot { width: 100%; display: flex; justify-content: center; }

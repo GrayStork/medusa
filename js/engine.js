@@ -28,8 +28,9 @@ window.G = window.G || {};
 
   G.state = fresh();
 
-  function save() {
-    try { localStorage.setItem(SAVE_KEY, JSON.stringify(G.state)); } catch (e) { /* storage unavailable: play on */ }
+  function save(quiet) {
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify(G.state)); } catch (e) { return; /* storage unavailable: play on */ }
+    if (quiet !== true && G.ui && G.ui.flashSaved) G.ui.flashSaved();
   }
   function load() {
     try {
@@ -81,6 +82,8 @@ window.G = window.G || {};
 
   function newGame() { clear(); G.state = fresh(); go("team"); }
   function resume() { var s = load(); if (s) { G.state = s; G.ui.render(); } else newGame(); }
+  /* Menu: save where we are, then show the title (Continue / New game) WITHOUT overwriting the saved screen. */
+  function toTitle() { save(); G.state.screen = "title"; G.ui.render(); }
 
   /* ---------- inventory ---------- */
   function addItem(symId) {
@@ -135,7 +138,7 @@ window.G = window.G || {};
       content: C,                 // all content
       puzzle: G.state.puzzle[id], // persistent puzzle state: mutate, then api.save()
       dev: G.dev,
-      save: save,
+      save: function () { save(); },
       icon: function (file) { return "assets/img/icons/" + file; },
       symbol: function (symId) { return C.symbols[symId]; },
       /* Show a message in the room's feedback line. kind: "right" | "wrong" | "near" | "info" */
@@ -231,13 +234,13 @@ window.G = window.G || {};
       G.state.timeUpShown = true;
       G.ui.toast(C.ui.timeUp, null, { calm: true });
     }
-    if (Math.floor(G.state.elapsedMs / 1000) % 5 === 0) save();
+    if (Math.floor(G.state.elapsedMs / 1000) % 5 === 0) save(true);
     G.ui.renderTopbar();
   }, 1000);
 
   G.rooms = { register: function (id, mod) { registry[id] = mod; } };
   G.engine = {
-    save: save, load: load, clear: clear, go: go, newGame: newGame, resume: resume,
+    save: save, load: load, clear: clear, go: go, newGame: newGame, resume: resume, toTitle: toTitle,
     roomById: roomById, totalScore: totalScore, rankFor: rankFor,
     addItem: addItem, selectItem: selectItem, openHint: openHint,
     mountRoom: mountRoom, unmountRoom: unmountRoom, computeRoomScore: computeRoomScore,

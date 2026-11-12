@@ -209,6 +209,8 @@ G.content = {
     toBonus: "לכתוב את המיתוס הבא", toResults: "לתוצאות",
     resultsTitle: "סיכום החקירה", rank: "הדרגה שלכם", totalTime: "זמן משחק",
     yourMyth: "המיתוס שכתבתם", yourEnding: "הסוף שבחרתם",
+    menu: "תפריט", autoSave: "✓ ההתקדמות נשמרת אוטומטית במחשב הזה. אפשר לסגור ולחזור מתי שרוצים.",
+    savedAt: "נשמר", newGameHint: "״משחק חדש״ מתחיל מההתחלה ומוחק את ההתקדמות.",
     achievementsTitle: "הישגים", cluesTitle: "רמזים נסתרים", download: "הורידו את הסיכום (קובץ טקסט)",
     mapTitle: "מפת המקדש", nextRoom: "החדר הבא", team: "קבוצה", players: "שחקנים",
     otherEnding: "נסו סוף אחר", otherEndingNote: "אפשר לחזור לבחירה הסופית ולגלות סוף אחר. הניקוד והמיתוס שכתבתם נשמרים.", playAgain: "לשחק שוב", check: "בדיקה", wrongNote: "−5"
